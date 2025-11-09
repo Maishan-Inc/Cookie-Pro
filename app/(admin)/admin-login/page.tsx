@@ -69,7 +69,7 @@ export default async function AdminLoginPage({ searchParams }: Props) {
           </label>
           <button
             type="submit"
-            className="w-full rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="btn-press w-full rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             {t.auth.submit}
           </button>

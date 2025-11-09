@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 
@@ -28,10 +28,7 @@ export function InstallWizard({
   envStatus,
   dbInfo,
 }: InstallWizardProps) {
-  const steps = useMemo(
-    () => ["license", "env", "db", "admin"] as const,
-    [],
-  );
+  const steps = useMemo(() => ["license", "checks", "admin"] as const, []);
   const [current, setCurrent] = useState<(typeof steps)[number]>("license");
   const [agreed, setAgreed] = useState(false);
   const [formState, setFormState] = useState({
@@ -43,6 +40,7 @@ export function InstallWizard({
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const stepIndex = steps.indexOf(current);
 
   const requiredEnvOk = envStatus
     .filter((item) => item.required)
@@ -50,8 +48,7 @@ export function InstallWizard({
 
   const canProceed =
     (current === "license" && agreed) ||
-    (current === "env" && requiredEnvOk) ||
-    current === "db";
+    (current === "checks" && requiredEnvOk);
 
   const nextStep = () => {
     const index = steps.indexOf(current);
@@ -60,12 +57,18 @@ export function InstallWizard({
     }
   };
 
+  const prevStep = () => {
+    if (stepIndex > 0) {
+      setCurrent(steps[stepIndex - 1]);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
     setStatus(null);
     if (formState.password !== formState.confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t.install.passwordMismatch);
       return;
     }
     setSubmitting(true);
@@ -83,7 +86,7 @@ export function InstallWizard({
         window.location.href = `/admin-login?${search.toString()}`;
       }, 1200);
     } catch (err) {
-      setError((err as Error).message);
+      setError(`${t.install.errorDetails}: ${(err as Error).message}`);
     } finally {
       setSubmitting(false);
     }
@@ -93,7 +96,7 @@ export function InstallWizard({
     switch (current) {
       case "license":
         return (
-          <div className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.install.licenseTitle}
             </h2>
@@ -111,72 +114,90 @@ export function InstallWizard({
             </label>
           </div>
         );
-      case "env":
+      case "checks":
         return (
-          <div className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
-              {t.install.envTitle}
-            </h2>
-            <p className="text-sm text-zinc-600 dark:text-zinc-300">
-              {t.install.envHelp}
-            </p>
-            <ul className="space-y-3">
-              {envStatus.map((item) => (
-                <li
-                  key={item.key}
-                  className="flex items-center justify-between rounded-2xl border border-zinc-100 px-4 py-2 text-sm dark:border-zinc-800"
-                >
-                  <span>
-                    {item.key}{" "}
-                    {!item.required && (
-                      <em className="text-xs text-zinc-400">
-                        {locale === "zh" ? "（可选）" : "(optional)"}
-                      </em>
-                    )}
-                  </span>
-                  <span
-                    className={
-                      item.present ? "text-emerald-600" : "text-rose-500"
-                    }
-                  >
-                    {item.present ? "OK" : "Missing"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      case "db":
-        return (
-          <div className="space-y-4 rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
-              {t.install.dbTitle}
-            </h2>
-            {dbInfo.message && (
-              <p className="text-sm text-rose-500">
-                {locale === "zh"
-                  ? "数据库诊断不可用，请确认 Supabase 连接。"
-                  : "Database diagnostics unavailable. Please verify your Supabase connection."}
-                {dbInfo.message ? ` (${dbInfo.message})` : null}
+          <div className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="space-y-2">
+              <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                {t.install.checksTitle}
+              </h2>
+              <p className="text-sm text-zinc-600 dark:text-zinc-300">
+                {t.install.checksDescription}
               </p>
-            )}
-            <dl className="text-sm text-zinc-600 dark:text-zinc-300">
-              <div className="flex justify-between border-b border-zinc-100 py-2 dark:border-zinc-800">
-                <dt>{t.install.dbVersion}</dt>
-                <dd>{dbInfo.version ?? t.install.pgUnknown}</dd>
+              <div className="rounded-2xl border border-dashed border-zinc-300 p-4 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                <p className="font-semibold text-zinc-900 dark:text-white">
+                  {t.install.instructionsTitle}
+                </p>
+                <p className="mt-1">{t.install.instructionsDescription}</p>
+                <ul className="mt-3 list-decimal space-y-2 pl-5">
+                  {t.install.instructionsList.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
-              <div className="flex justify-between py-2">
-                <dt>Supabase URL</dt>
-                <dd>{dbInfo.projectUrl ?? "N/A"}</dd>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-3 rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                  {t.install.envTitle}
+                </h3>
+                <p className="text-xs text-zinc-500">{t.install.envHelp}</p>
+                <ul className="space-y-2 text-sm">
+                  {envStatus.map((item) => (
+                    <li
+                      key={item.key}
+                      className="flex items-center justify-between rounded-xl border border-zinc-100 px-3 py-2 dark:border-zinc-700"
+                    >
+                      <span>
+                        {item.key}{" "}
+                        {!item.required && (
+                          <em className="text-xs text-zinc-400">
+                            {t.install.optionalLabel}
+                          </em>
+                        )}
+                      </span>
+                      <span
+                        className={
+                          item.present
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-rose-500 dark:text-rose-400"
+                        }
+                      >
+                        {item.present ? t.install.checkOk : t.install.checkMissing}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </dl>
+              <div className="space-y-3 rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                  {t.install.dbTitle}
+                </h3>
+                <p className="text-xs text-zinc-500">{t.install.connectionHelp}</p>
+                <dl className="text-sm text-zinc-600 dark:text-zinc-300">
+                  <div className="flex justify-between border-b border-zinc-100 py-2 dark:border-zinc-800">
+                    <dt>{t.install.dbVersion}</dt>
+                    <dd>{dbInfo.version ?? t.install.pgUnknown}</dd>
+                  </div>
+                  <div className="flex justify-between border-b border-zinc-100 py-2 dark:border-zinc-800">
+                    <dt>Supabase URL</dt>
+                    <dd>{dbInfo.projectUrl ?? "N/A"}</dd>
+                  </div>
+                  {dbInfo.message && (
+                    <div className="py-2 text-rose-500 dark:text-rose-400">
+                      {dbInfo.message}
+                    </div>
+                  )}
+                </dl>
+              </div>
+            </div>
           </div>
         );
       case "admin":
         return (
           <form
             onSubmit={handleSubmit}
-            className="space-y-4 rounded-3xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
+            className="space-y-4 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
           >
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.install.adminTitle}
@@ -245,22 +266,26 @@ export function InstallWizard({
               />
             </label>
             {error && (
-              <p className="text-sm text-rose-500 dark:text-rose-400">{error}</p>
+              <p className="text-sm text-rose-500 dark:text-rose-400" role="alert">
+                {error}
+              </p>
             )}
             {status && (
-              <p className="text-sm text-emerald-600 dark:text-emerald-400">
+              <p className="text-sm text-emerald-600 dark:text-emerald-400" role="status">
                 {status}
               </p>
             )}
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-zinc-700 disabled:opacity-70 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="btn-press w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-zinc-700 disabled:opacity-70 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               {submitting ? "..." : t.install.submit}
             </button>
           </form>
         );
+      default:
+        return null;
     }
   };
 
@@ -271,7 +296,7 @@ export function InstallWizard({
           <span
             key={step}
             className={`rounded-full px-3 py-1 ${
-              steps.indexOf(current) >= index
+              stepIndex >= index
                 ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
                 : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
             }`}
@@ -280,19 +305,30 @@ export function InstallWizard({
           </span>
         ))}
       </div>
-      {renderStep()}
-      {current !== "admin" && (
-        <div className="flex justify-end">
+      <div key={current} className="animate-step">
+        {renderStep()}
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {stepIndex > 0 && (
+          <button
+            type="button"
+            onClick={prevStep}
+            className="btn-press rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold text-zinc-700 transition hover:-translate-y-0.5 hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-white dark:hover:text-white"
+          >
+            {t.install.back}
+          </button>
+        )}
+        {current !== "admin" && (
           <button
             type="button"
             onClick={nextStep}
             disabled={!canProceed}
-            className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="btn-press rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-zinc-700 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             {t.install.next}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

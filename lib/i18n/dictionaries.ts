@@ -24,10 +24,16 @@ export type Dictionary = {
     licenseTitle: string;
     licenseAgreement: string;
     licenseCta: string;
+    instructionsTitle: string;
+    instructionsDescription: string;
+    instructionsList: string[];
     envTitle: string;
     envHelp: string;
     dbTitle: string;
     dbVersion: string;
+    checksTitle: string;
+    checksDescription: string;
+    connectionHelp: string;
     adminTitle: string;
     adminDescription: string;
     adminPathLabel: string;
@@ -38,6 +44,12 @@ export type Dictionary = {
     successRedirect: string;
     pgUnknown: string;
     next: string;
+    back: string;
+    passwordMismatch: string;
+    errorDetails: string;
+    checkOk: string;
+    checkMissing: string;
+    optionalLabel: string;
   };
   dashboard: {
     heading: string;
@@ -192,11 +204,21 @@ export const dictionaries: Record<Locale, Dictionary> = {
       licenseAgreement:
         "By proceeding you acknowledge the Maishan, Inc Open Source Software Agreement (MIT License) and confirm that you are authorized to configure this deployment.",
       licenseCta: "I agree, continue",
+      instructionsTitle: "Before you continue",
+      instructionsDescription: "Follow the checklist below to make sure your Supabase project and environment variables are ready. Each item links back to the docs in case you need a refresher.",
+      instructionsList: [
+        "Create (or reuse) a Supabase project, then copy SUPABASE_URL and SUPABASE_SERVICE_ROLE into your Vercel environment (Production + Preview).",
+        "Run sql/01_init.sql once inside Supabase → SQL Editor so all tables and functions exist before continuing.",
+        "Decide on a secure admin alias (e.g., /admin-yourteam) and store ADMIN_SESSION_SECRET/USER_SESSION_SECRET in the environment.",
+      ],
       envTitle: "2 · Environment Check",
       envHelp:
         "We verify mandatory environment variables so Secrets never leave your pipeline.",
       dbTitle: "3 · Database Diagnostics",
       dbVersion: "Postgres version",
+      checksTitle: "Environment & database checks",
+      checksDescription: "All installation tests run inside your Supabase project—if something fails, use the guidance below to fix it and run the check again.",
+      connectionHelp: "Need help connecting? Confirm the Supabase project URL matches the Service Role and that your IP/location is allowed inside Supabase → Project Settings → API.",
       adminTitle: "4 · Administrator Account",
       adminDescription:
         "Define a console alias and credentials. The alias will be required to open the admin login screen.",
@@ -208,6 +230,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       successRedirect: "Installation complete. Redirecting you to the admin login…",
       pgUnknown: "Unknown (run SQL upgrade to expose version)",
       next: "Next",
+      back: "Back",
+      passwordMismatch: "Passwords do not match.",
+      errorDetails: "Installation failed",
+      checkOk: "Configured",
+      checkMissing: "Missing",
+      optionalLabel: "(optional)",
     },
     dashboard: {
       heading: "User Console",
@@ -355,25 +383,43 @@ export const dictionaries: Record<Locale, Dictionary> = {
       cardBody: "内置 Edge 脚本、Supabase 存储、CAPTCHA 防护与双语 UI，兼顾安全与体验。",
     },
     install: {
-      title: "引导式安装",
-      description: "依次完成协议确认、环境检测、数据库诊断与管理员初始化，即可锁定部署。",
-      licenseTitle: "步骤一 · 协议确认",
-      licenseAgreement: "继续操作即表示你已阅读并同意 Maishan, Inc MIT 开源协议，并确认拥有本次部署权限。",
-      licenseCta: "我已阅读并同意",
-      envTitle: "步骤二 · 环境检测",
-      envHelp: "系统会检测必要环境变量，确保密钥只存在于受控环境。",
-      dbTitle: "步骤三 · 数据库诊断",
-      dbVersion: "Postgres 版本",
-      adminTitle: "步骤四 · 管理员账户",
-      adminDescription: "配置唯一后台别名与管理员凭据。访问登录页必须提供该别名。",
-      adminPathLabel: "管理员后台地址（例：/admin-max1234）",
-      adminNameLabel: "管理员名称",
-      passwordLabel: "密码",
-      confirmPasswordLabel: "确认密码",
-      submit: "完成安装",
-      successRedirect: "安装完成，正在跳转到管理员登录页…",
-      pgUnknown: "未知（请执行 SQL 升级以获取版本）",
-      next: "下一步",
+      title: "����ʽ��װ",
+      description: "�������Э��ȷ�ϡ�������⡢���ݿ���������Ա��ʼ����������������",
+      licenseTitle: "����һ �� Э��ȷ��",
+      licenseAgreement:
+        "������������ʾ�����Ķ���ͬ�� Maishan, Inc ��Դ����Э�飨MIT License������ȷ���ѻ���Ȩִ�б��β���",
+      licenseCta: "�����Ķ���ͬ��",
+      instructionsTitle: "��ʼ֮ǰ",
+      instructionsDescription: "�밴�����²���׼���û������������ݿ⣬�Ա����ڰ�װ�����г������ӻ�Ȩ�����⣺",
+      instructionsList: [
+        "�� Supabase ����̨���� SUPABASE_URL��SUPABASE_SERVICE_ROLE�����ֱ�д�� Vercel �� Production �� Preview ����������",
+        "�� Supabase �� SQL Editor��ִ��һ�� sql/01_init.sql��ȷ�����б��뺯���Ѵ�����",
+        "׼��Ψһ�ĺ�̨·������ /admin-yourteam�������� ADMIN_SESSION_SECRET / USER_SESSION_SECRET ͬ��������������",
+      ],
+      envTitle: "����� �� �������",
+      envHelp: "ϵͳ�����Ҫ����������ȷ����Կ���������ܿػ����С�",
+      dbTitle: "������ �� ���ݿ����",
+      dbVersion: "Postgres �汾",
+      checksTitle: "���������ݿ����ϼ��",
+      checksDescription: "ÿ�ΰ�װ����ʵʱ��� Supabase ���ӣ�����ʧ����������ʾ�޸���������һ������",
+      connectionHelp: "����ʧ�ܣ���ȷ�� Supabase URL �� Service Role һ�£����� Project Settings �� API ��������ǰ IP/�������ʡ�",
+      adminTitle: "������ �� ����Ա�˻�",
+      adminDescription:
+        "����Ψһ��̨���������Աƾ�ݣ��������ʹ���Ա��¼ҳʱ�����ṩ�ñ�����",
+      adminPathLabel: "����Ա��̨��ַ������/admin-max1234��",
+      adminNameLabel: "����Ա����",
+      passwordLabel: "����",
+      confirmPasswordLabel: "ȷ������",
+      submit: "��ɰ�װ",
+      successRedirect: "��װ��ɣ�ϵͳ������ת������Ա��¼ҳ�桭",
+      pgUnknown: "δ֪����ִ�� SQL �����Ի�ȡ�汾��",
+      next: "��һ��",
+      back: "��һ��",
+      passwordMismatch: "������������벻һ�¡�",
+      errorDetails: "��װʧ��",
+      checkOk: "������",
+      checkMissing: "δ����",
+      optionalLabel: "����ѡ��",
     },
     dashboard: {
       heading: "用户控制台",
