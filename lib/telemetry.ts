@@ -1,14 +1,11 @@
-import type { ConsentChoices } from "@/lib/validation";
+import type { ConsentChoices, CollectPayload } from "@/lib/validation";
 import { NECESSARY_ONLY_EVENTS } from "@/lib/constants";
 
 export function filterEventsByConsent({
   events,
   consent,
 }: {
-  events: Array<{
-    type: string;
-    purpose?: string;
-  } & Record<string, unknown>>;
+  events: CollectPayload["events"];
   consent: ConsentChoices | null;
 }) {
   return events.filter((event) => {
