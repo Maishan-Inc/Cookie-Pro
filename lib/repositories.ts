@@ -36,10 +36,15 @@ export async function upsertDevice(
   deviceId: string,
 ): Promise<void> {
   const now = new Date().toISOString();
-  const { error } = await (client().from("devices") as any).upsert(
-    { site_id: siteId, device_id: deviceId, last_seen_at: now },
-    { onConflict: "site_id,device_id" },
-  );
+  const payload = {
+    site_id: siteId,
+    device_id: deviceId,
+    last_seen_at: now,
+  } satisfies Database["public"]["Tables"]["devices"]["Insert"];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (client().from("devices") as any).upsert(payload, {
+    onConflict: "site_id,device_id",
+  });
   if (error) throw error;
 }
 
@@ -58,17 +63,18 @@ export async function insertConsent({
   userAgent: string | null;
   ipTruncated: string | null;
 }): Promise<void> {
-  const { error } = await (client().from("consents") as any).upsert(
-    {
-      site_id: siteId,
-      device_id: deviceId,
-      policy_version: policyVersion,
-      choices,
-      user_agent: userAgent,
-      ip_truncated: ipTruncated,
-    },
-    { onConflict: "site_id,device_id,policy_version" },
-  );
+  const payload = {
+    site_id: siteId,
+    device_id: deviceId,
+    policy_version: policyVersion,
+    choices,
+    user_agent: userAgent,
+    ip_truncated: ipTruncated,
+  } satisfies Database["public"]["Tables"]["consents"]["Insert"];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (client().from("consents") as any).upsert(payload, {
+    onConflict: "site_id,device_id,policy_version",
+  });
   if (error) throw error;
 }
 
@@ -92,6 +98,7 @@ export async function insertEvents(
   entries: Array<Database["public"]["Tables"]["events"]["Insert"]>,
 ): Promise<void> {
   if (!entries.length) return;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client().from("events") as any).insert(entries);
   if (error) throw error;
 }
@@ -99,6 +106,7 @@ export async function insertEvents(
 export async function getDashboard(
   siteKey: string,
 ): Promise<Database["public"]["Functions"]["get_consent_dashboard"]["Returns"]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (client().rpc as any)("get_consent_dashboard", {
     p_site_key: siteKey,
   });

@@ -1,72 +1,52 @@
-# Cookie-Pro 使用指南（中文）
+﻿# Cookie-Pro 使用指南（中文）
 
-> 基于 **Next.js App Router + Supabase** 的「同意管理 + 最小遥测」参考实现，完整遵循 `AGENTS.md` 规范。
+> 基于 **Next.js 16 App Router + Supabase** 的「同意管理 + 最小遥测」解决方案，实现方式完全遵循 `AGENTS.md`。
 
-## 功能亮点
+## 核心特性
+- **Edge `/script.js` 嵌入脚本**：按需加载 FPJS，站点盐 + SHA-256 生成匿名 `device_id`，Shadow DOM 弹窗支持深浅色主题与中英文文案，并在必要类同意前阻断广告/画像事件。
+- **安全 API 层**：`/api/consent/status`、`/api/consent`、`/api/collect` 采用 Zod 校验、CAPTCHA 抽象、Origin 白名单、速率限制与结构化日志；所有写入通过 Supabase Service Role + RLS。
+- **安装 & 管理后台**：首访强制进入 `/install`，依次确认许可证、检测环境变量/数据库、创建管理员路径与账户；安装完成后可登录管理员后台，配置 SMTP、邮件模板、系统设置与用户管理。
+- **用户体系与 i18n**：提供 `/login`、`/register`、`/user` 控制台，注册需 6 位大写验证码（多语言模板 + SMTP），全站组件均支持 zh-CN / en-US 与暗/亮主题切换。
 
-- Edge Runtime `/script.js` 嵌入脚本：内置 FPJS + Web Crypto 降级指纹、CAPTCHA 首访校验、Shadow DOM 弹窗、i18n 文案与本地缓存。
-- 安全后端：`/api/consent/status`、`/api/consent`、`/api/collect` 全量 Zod 校验、RLS + Supabase Service Role 持久化、起源白名单与速率限制。
-- 安装/升级向导 + 仪表盘：一键执行 `sql/01_init.sql`、创建站点、展示数据看板、触发 `02_update.sql`。
-- 工具链：Vitest 覆盖核心库、Playwright 预留 e2e、Prettier/ESLint/Instrumentation 一应俱全。
-
-## 前置条件
-
+## 环境要求
 - Node.js 20+
-- 一个 Supabase 项目（获取 `SUPABASE_URL` 与 `SUPABASE_SERVICE_ROLE`）
-- （可选）Turnstile / hCaptcha / reCAPTCHA 的密钥，用于站点级 CAPTCHA
+- Supabase 项目（Postgres）以及 *Service Role* Key
+- 可选 CAPTCHA 密钥（Turnstile / hCaptcha / reCAPTCHA）
+- SMTP 凭据（通过管理员后台保存）
 
-## 本地开发
+## 必填环境变量（`.env.local` 或 Vercel 项目设置）
+| 变量 | 说明 |
+| --- | --- |
+| `SUPABASE_URL` | Supabase 项目 URL（https://xxx.supabase.co） |
+| `SUPABASE_SERVICE_ROLE` | Supabase Service Role Key，仅服务器可用 |
+| `NEXT_PUBLIC_FPJS_KEY` | （可选）FPJS 浏览器 Key，用于 CDN 加速 |
+| `CAPTCHA_RECAPTCHA_SECRET` / `HCAPTCHA_SECRET` / `TURNSTILE_SECRET` | （可选）对应提供商服务端密钥，用于站点首访人机验证 |
+| `ADMIN_SESSION_SECRET` | 安装向导与管理员会话加密密钥 |
+| `USER_SESSION_SECRET` | 普通用户登录会话加密密钥 |
 
-```bash
-npm install
-npm run lint
-npm run test
-npm run dev
-```
+> 站点级 CAPTCHA site key、Origin 白名单、SMTP/邮件模板等由安装/管理员后台维护，无需写入环境变量。
 
-访问 `http://localhost:3000/install`，按向导执行 `sql/01_init.sql` 并创建站点，获取 `site_key`。
+## 本地开发流程
+1. `npm install`
+2. `npm run lint && npm run test`
+3. `npm run dev`
+4. 首次访问 `http://localhost:3000/install`：
+   - 第一步：确认 Maishan, Inc. 开源软件协议。
+   - 第二步：检测环境变量、数据库连通性、Supabase 版本。
+   - 第三步：创建管理员名称、密码、以及专属后台路径（例如 `/admin-max12345`，安装完成后会将 `/admin-login` 绑定到该路径）。
+   - 第四步：自动执行 `sql/01_init.sql`，写入站点及默认配置。
+5. 完成后会跳转到管理员后台，随后可创建站点、配置 SMTP，并生成用户控制台入口。
 
-### 环境变量（`.env.local`）
-
-```
-SUPABASE_URL=https://<project>.supabase.co
-SUPABASE_SERVICE_ROLE=<service-role-key>
-NEXT_PUBLIC_FPJS_KEY=<可选，用于 FPJS CDN>
-CAPTCHA_RECAPTCHA_SECRET=<可选>
-HCAPTCHA_SECRET=<可选>
-TURNSTILE_SECRET=<可选>
-```
-
-每个站点的 CAPTCHA site key、Origin allowlist 可在安装向导界面配置。
-
-## 使用 Vercel 部署（推荐）
-
-1. **准备代码**：将仓库推送到 GitHub。
-2. **Vercel 导入**：
-   - 登录 Vercel，点击 *Add New → Project*，选择对应的 GitHub 仓库。
-   - 框架会自动识别为 Next.js。
-3. **配置环境变量**：
-   - 在 “Environment Variables” 中新增上表所列的变量；注意 `SUPABASE_SERVICE_ROLE` 仅供服务端使用。
-4. **首轮部署**：点击 *Deploy*。
-5. **初始化数据库**：
-   - 登录 Supabase → SQL Editor，将 `sql/01_init.sql` 原样执行一次。
-   - 如后续迭代需要 schema 变更，可在后台「升级卡片」或 Supabase 控制台中执行 `sql/02_update.sql`。
-6. **运行安装向导**：
-   - 打开 `https://<your-vercel-domain>/install`。
-   - 填写站点名称、策略版本、Origin 白名单、CAPTCHA 站点密钥等信息，提交后获得 `site_key` 与嵌入片段。
-7. **切换正式域名（可选）**：
-   - 在 Vercel 「Domains」中添加自定义域名。
-   - Edge 脚本即托管于 `https://<your-domain>/script.js`，内置 `Cache-Control: public, max-age=86400, immutable`，如更新脚本需在 Vercel 触发重新部署。
-
-### 生产检查清单
-
-- ✅ Vercel 环境变量已包含 `SUPABASE_*`、CAPTCHA 密钥、`NEXT_PUBLIC_FPJS_KEY`（若使用）。
-- ✅ Supabase 已执行 `01_init.sql`，并启用日志告警。
-- ✅ 安装向导中设置了站点 `site_key`、Origin 白名单与 CAPTCHA。
-- ✅ `/dashboard` 能够查询指标、`/install` 的「升级」卡片可执行 `02_update.sql`。
-- ✅ 客户页脚嵌入 `<script src="https://<domain>/script.js" ...></script>`，并在策略更新后同步 `data-policy-version`。
-
-## 嵌入脚本示例
+## Vercel 部署指引（推荐）
+1. **导入仓库**：将项目推送到 GitHub/GitLab，登录 Vercel 点击 *Add New Project* 选择仓库，框架自动识别为 Next.js。
+2. **配置环境变量**：在 Vercel 的 *Environment Variables* 分别为 Production/Preview 填入上表变量；`SUPABASE_SERVICE_ROLE`、`ADMIN_SESSION_SECRET`、`USER_SESSION_SECRET` 勿暴露给客户端（默认只在服务器可见）。
+3. **执行 `sql/01_init.sql`**：
+   - 登录 Supabase → SQL Editor → 复制 `sql/01_init.sql` 全文执行一次。
+   - 升级时在管理员后台「数据库升级」卡片触发 `sql/02_update.sql`（内部会申请 `pg_advisory_lock(9876501)` 并在失败时回滚）。
+4. **首次部署**：回到 Vercel 点击 *Deploy*，观察 `next build` 通过后自动生成预览链接。
+5. **运行安装向导**：访问 `https://<vercel-domain>/install`，按向导完成许可证 → 环境检测 → 数据库检查 → 管理员创建，安装成功后即刻跳转到自定义的管理员路径。
+6. **配置 SMTP 与邮件模板**：登录管理员后台，进入「系统设置 > 邮件」填写 SMTP 主机、端口、账号、发件人，并为多语言验证码模板提供主题/正文。
+7. **创建站点 & 嵌入脚本**：在后台创建站点获取 `site_key`、策略版本、Origin 白名单与 CAPTCHA site key，并将以下脚本放在客户站点 `</body>` 前：
 
 ```html
 <script
@@ -78,70 +58,63 @@ TURNSTILE_SECRET=<可选>
 ></script>
 ```
 
-脚本会根据 `policy_version` 与服务器状态决定是否弹窗；在获得非必要类目同意前，所有广告/画像事件均被屏蔽。
+### 上线前检查清单
+- Vercel Production/Preview 环境变量完整（含 Service Role 与会话密钥）。
+- Supabase 已执行 `01_init.sql` 并配置日志告警；如有 schema 变更，可在后台执行 `02_update.sql`。
+- 安装向导完成且 `/install` 会自动跳转至站点首页；管理员自定义路径可正常访问，直接访问 `/admin-login` 会提示错误。
+- 管理员后台中 SMTP 配置可连通，并成功保存中英文邮件模板。
+- 用户注册/登录流程（含 6 位验证码输入组件）在 `/register`、`/login`、`/user` 运行正常，UI 可根据系统或用户偏好切换深浅色及语言。
+- Dashboard 能读取 `get_consent_dashboard` 数据，`/api/collect` 写入最小遥测且受同意门控。
 
 ---
 
 # Cookie-Pro Guide (English)
 
-> Consent + minimal telemetry MVP on **Next.js App Router + Supabase**, aligned with the AGENTS.md spec.
+> Consent + minimal telemetry stack built on **Next.js 16 App Router** and **Supabase**, fully compliant with `AGENTS.md`.
 
 ## Highlights
+- **Edge embed** with FPJS fallback, site-salted SHA-256 device IDs, CAPTCHA gate, themed modal, local caching, and locale-aware copy.
+- **Hardened APIs** for consent status/write/collect with Zod validation, origin allowlists, rate limiting, CAPTCHA adapters, and Supabase Service Role writes behind RLS.
+- **Installer & Admin UX** forcing newcomers onto `/install`, verifying license/env/DB, creating a custom admin path + credentials, then exposing dashboards, SMTP + template management, system settings, and user management.
+- **End-user auth** delivering `/register`, `/login`, `/user` console, 6-character uppercase verification codes via SMTP templates, plus full dark/light + zh/en i18n coverage.
 
-- Edge `/script.js` embed with FPJS + Web Crypto fallback, CAPTCHA gating, shadow-modal UI, i18n strings, and local caching.
-- Hardened APIs (`/api/consent/status`, `/api/consent`, `/api/collect`) with Zod validation, RLS-backed Supabase writes, origin allowlists, and rate limiting.
-- Installer/Dashboard flows to run migrations, provision sites, monitor consent KPIs, and trigger schema upgrades.
-- Tooling includes Vitest suites for all critical helpers, Playwright placeholders, ESLint/Prettier, and instrumentation hooks.
-
-## Prerequisites
-
+## Requirements
 - Node.js 20+
-- Supabase project (Postgres) + Service Role key
-- Optional CAPTCHA credentials per site (Turnstile / hCaptcha / reCAPTCHA)
+- Supabase project (Postgres) with Service Role key
+- Optional CAPTCHA secrets (Turnstile / hCaptcha / reCAPTCHA)
+- SMTP credentials stored through the admin UI
+
+## Environment Variables
+| Variable | Purpose |
+| --- | --- |
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE` | Service Role key (server-only) |
+| `NEXT_PUBLIC_FPJS_KEY` | Optional FPJS browser key |
+| `CAPTCHA_RECAPTCHA_SECRET` / `HCAPTCHA_SECRET` / `TURNSTILE_SECRET` | Optional provider secrets to validate CAPTCHA tokens server-side |
+| `ADMIN_SESSION_SECRET` | Secret for admin-session cookies (installer + admin login) |
+| `USER_SESSION_SECRET` | Secret for end-user sessions |
+
+Site-specific CAPTCHA keys, SMTP settings, and mail templates live in the database and are editable from the admin console, so they are not part of the env file.
 
 ## Local Development
+1. `npm install`
+2. `npm run lint && npm run test`
+3. `npm run dev`
+4. Open `http://localhost:3000/install` and follow the wizard:
+   - Accept the Maishan, Inc. OSS license.
+   - Run environment + Supabase connectivity checks (shows Postgres version / project URL).
+   - Provide admin name/password (with confirmation) and a unique admin route (e.g., `/admin-max12345`). Direct hits to `/admin-login` remain blocked until the alias is supplied.
+   - Apply `sql/01_init.sql`, seed default site config, and issue the first admin session.
+5. After the redirect to the admin path, configure SMTP/templates and create sites or customer users as needed.
 
-```bash
-npm install
-npm run lint
-npm run test
-npm run dev
-```
-
-Browse to `http://localhost:3000/install` to run the setup wizard, apply `sql/01_init.sql`, and mint a `site_key`.
-
-### Environment Variables (`.env.local`)
-
-```
-SUPABASE_URL=https://<project>.supabase.co
-SUPABASE_SERVICE_ROLE=<service-role-key>
-NEXT_PUBLIC_FPJS_KEY=<optional>
-CAPTCHA_RECAPTCHA_SECRET=<optional>
-HCAPTCHA_SECRET=<optional>
-TURNSTILE_SECRET=<optional>
-```
-
-Use the installer UI to configure per-site CAPTCHA site keys and origin allowlists.
-
-## Deploying to Vercel (Detailed)
-
-1. **Connect repo** – push to GitHub and import via Vercel → *Add New Project*. The Next.js preset is auto-selected.
-2. **Set env vars** – replicate `.env.local` entries inside the Vercel dashboard (Production + Preview). Only `NEXT_PUBLIC_*` values are exposed to the client.
-3. **Initial deploy** – hit *Deploy*; Vercel builds Next.js with the Edge script.
-4. **Run SQL migrations** – in Supabase, execute `sql/01_init.sql` once. Keep `sql/02_update.sql` handy for future upgrades (the installer exposes an Upgrade card that executes it inside an advisory lock).
-5. **Finish setup** – open `https://<vercel-domain>/install`, complete the wizard to create a site, and copy the embed snippet.
-6. **Custom domains** – add domains under Vercel → Domains; `script.js` automatically serves from the new origin with long-term caching.
-7. **Monitoring** – visit `/dashboard` to confirm metrics flow, and configure Supabase log drains/alerts for policy or RLS failures.
-
-## Production Checklist
-
-- ✅ `SUPABASE_*` and CAPTCHA secrets configured in Vercel.
-- ✅ `sql/01_init.sql` executed; `02_update.sql` available for upgrades.
-- ✅ Site created via installer, snippet deployed to the customer site (before `</body>`).
-- ✅ Origin whitelist/CAPTCHA enabled per site to block abuse.
-- ✅ `/dashboard` shows consent/ads trends; telemetry is accepted via `/api/collect`.
-
-## Embed Snippet
+## Deploying on Vercel
+1. **Import repo** → push to GitHub/GitLab and connect via *Add New Project*.
+2. **Set env vars** → mirror the variables above for Production/Preview (only `NEXT_PUBLIC_*` leak to the browser).
+3. **Run baseline SQL** → execute `sql/01_init.sql` once inside Supabase. Future migrations go through the "Database Upgrade" card (internally wraps `sql/02_update.sql` in an advisory lock).
+4. **Deploy** → click *Deploy*; verify `next build` succeeds (the instrumentation warning is informational only).
+5. **Installer** → hit `https://<vercel-domain>/install` and finish the wizard. Once complete, `/install` redirects to the main site and the custom admin path becomes the only entrypoint for `/admin-login`.
+6. **Configure SMTP & templates** → from the admin console, fill in host/port/secure/user/password + from fields, then edit zh/en verification-code templates.
+7. **Provision sites & embed** → create at least one site to obtain the `site_key`, policy version, origin whitelist, and CAPTCHA site key. Embed the script before `</body>` on the customer property:
 
 ```html
 <script
@@ -153,4 +126,16 @@ Use the installer UI to configure per-site CAPTCHA site keys and origin allowlis
 ></script>
 ```
 
-The modal re-appears when the policy version changes or consent is missing; non-essential telemetry stays disabled until the relevant categories are accepted.
+### Production Checklist
+- Vercel env vars include Supabase keys, session secrets, and optional CAPTCHA secrets.
+- Supabase migrations (`01_init.sql` + optional `02_update.sql`) executed; log drains/alerts enabled.
+- Installer completed successfully; admin alias enforced; `/install` no longer exposed.
+- SMTP settings validated and multilingual templates saved; verification e-mails render correctly.
+- User auth flows (register/login/dashboard) verified alongside locale + theme toggles.
+- Dashboard reads from `get_consent_dashboard`; `/api/collect` stores events gated by consent; rate limits behave as expected.
+
+## Troubleshooting
+- **Build errors** → run `npm run build`; if TypeScript complains about Supabase inserts, ensure `types/supabase.ts` matches the latest schema.
+- **Installer redirect loop** → confirm `admin_settings.install_complete` is `true` and your session cookies are present; otherwise rerun the wizard.
+- **CAPTCHA failures** → verify the site’s provider + site key match the server-side secret set in env vars.
+- **E-mail delivery** → use the "Send test message" action inside the SMTP panel; check your provider for TLS/port requirements.

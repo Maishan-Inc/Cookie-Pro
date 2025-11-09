@@ -3,22 +3,31 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 
-import { generateSiteSalt } from "@/lib/crypto";
-import { getServiceRoleClient } from "@/lib/supabase";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+
 import { DEFAULT_POLICY_VERSION } from "@/lib/constants";
+import { generateSiteSalt } from "@/lib/crypto";
+import { upsertAdminSettings } from "@/lib/admin-settings";
+import { getServiceRoleClient } from "@/lib/supabase";
 import type { Database } from "@/types/supabase";
+import { needsInstallation } from "@/lib/install/status";
+import { setAdminSession } from "@/lib/security/admin-session";
+import { ensureSystemSettings } from "@/lib/system-settings";
 
 export async function testConnection() {
   try {
-    const { error } = await getServiceRoleClient()
-      .from("sites")
-      .select("id")
-      .limit(1)
-      .single();
-    if (error && error.code !== "PGRST116") {
-      throw error;
+    const client = getServiceRoleClient();
+    const versionResult = await client.rpc("pg_version_text");
+    if (versionResult.error && versionResult.error.code !== "42883") {
+      throw versionResult.error;
     }
-    return { ok: true };
+    return {
+      ok: true,
+      version:
+        (versionResult.data as string | null) ??
+        "Upgrade required to expose version",
+    };
   } catch (error) {
     return { ok: false, message: (error as Error).message };
   }
@@ -55,7 +64,43 @@ export async function createSite(formData: FormData) {
     captcha_secret: captchaSecret,
   } satisfies Database["public"]["Tables"]["sites"]["Insert"];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (client.from("sites") as any).insert([payload]);
 
   revalidatePath("/install");
+}
+
+const adminSchema = z.object({
+  adminName: z.string().min(2),
+  password: z.string().min(8),
+  adminPath: z
+    .string()
+    .min(6)
+    .regex(/^\/[a-zA-Z0-9\-]+$/, "Path must start with / and contain only URL-safe characters"),
+});
+
+export async function completeInstallation(input: {
+  adminName: string;
+  password: string;
+  adminPath: string;
+}) {
+  if (!(await needsInstallation())) {
+    throw new Error("Installation already completed.");
+  }
+  const payload = adminSchema.parse(input);
+  const adminPath = payload.adminPath.replace(/^\//, "");
+  const passwordHash = await bcrypt.hash(payload.password, 12);
+
+  await upsertAdminSettings({
+    admin_name: payload.adminName,
+    admin_password_hash: passwordHash,
+    admin_path: adminPath,
+    install_complete: true,
+  });
+
+  await ensureSystemSettings();
+
+  await setAdminSession(passwordHash);
+
+  revalidatePath("/");
 }

@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { CollectPayloadSchema } from "@/lib/validation";
+import type { CollectPayload } from "@/lib/validation";
 import type { Json } from "@/types/supabase";
 
 import {
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     const consent = await latestConsent(site.id, deviceId);
-    const filtered = filterEventsByConsent({
+    const filtered: CollectPayload["events"] = filterEventsByConsent({
       events: payload.events,
       consent: (consent?.choices as Record<string, boolean>) ?? null,
     });
@@ -108,20 +109,28 @@ export async function POST(request: NextRequest) {
     );
     const ua = request.headers.get("user-agent");
 
-    await insertEvents(
-      filtered.map((event) => ({
-        site_id: site.id,
-        device_id: deviceId,
-        type: event.type,
-        url: event.url ?? null,
-        referrer: event.referrer ?? null,
-        ua,
-        ip_truncated: ipTruncated,
-        ts: event.ts ? new Date(event.ts).toISOString() : undefined,
-        payload: (event.payload as Json | undefined) ?? null,
-        purpose: event.purpose ?? null,
-      })),
-    );
+    const sanitizeString = (value: unknown): string | null =>
+      typeof value === "string" && value.length > 0 ? value : null;
+
+    const toJsonOrNull = (value: unknown): Json | null => {
+      if (value === undefined || value === null) return null;
+      return value as Json;
+    };
+
+    const eventsToPersist = filtered.map((event) => ({
+      site_id: site.id,
+      device_id: deviceId,
+      type: event.type,
+      url: sanitizeString(event.url),
+      referrer: sanitizeString(event.referrer),
+      ua,
+      ip_truncated: ipTruncated,
+      ts: event.ts ? new Date(event.ts).toISOString() : undefined,
+      payload: toJsonOrNull(event.payload),
+      purpose: sanitizeString(event.purpose),
+    }));
+
+    await insertEvents(eventsToPersist);
 
     await upsertDevice(site.id, deviceId);
 

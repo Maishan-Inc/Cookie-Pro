@@ -7,6 +7,8 @@ const serverEnvSchema = z.object({
   CAPTCHA_RECAPTCHA_SECRET: z.string().optional(),
   HCAPTCHA_SECRET: z.string().optional(),
   TURNSTILE_SECRET: z.string().optional(),
+  ADMIN_SESSION_SECRET: z.string().optional(),
+  USER_SESSION_SECRET: z.string().optional(),
 });
 
 type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -23,6 +25,8 @@ export function getServerEnv(): ServerEnv {
     CAPTCHA_RECAPTCHA_SECRET: process.env.CAPTCHA_RECAPTCHA_SECRET,
     HCAPTCHA_SECRET: process.env.HCAPTCHA_SECRET,
     TURNSTILE_SECRET: process.env.TURNSTILE_SECRET,
+    ADMIN_SESSION_SECRET: process.env.ADMIN_SESSION_SECRET,
+    USER_SESSION_SECRET: process.env.USER_SESSION_SECRET,
   });
 
   if (!parsed.success) {
