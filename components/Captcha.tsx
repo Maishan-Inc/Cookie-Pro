@@ -28,6 +28,7 @@ export function Captcha({ provider, siteKey, onToken }: Props) {
 
   useEffect(() => {
     if (!provider || !siteKey || !ref.current) return;
+    const resolvedSiteKey = siteKey;
     let disposed = false;
 
     async function mount() {
@@ -36,7 +37,7 @@ export function Captcha({ provider, siteKey, onToken }: Props) {
           "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
         );
         const widgetId = window.turnstile.render(ref.current!, {
-          sitekey: siteKey,
+          sitekey: resolvedSiteKey,
           callback(token: string) {
             onToken?.(token);
           },
@@ -47,7 +48,7 @@ export function Captcha({ provider, siteKey, onToken }: Props) {
       if (provider === "hcaptcha") {
         await loadScript("https://js.hcaptcha.com/1/api.js?render=explicit");
         const widgetId = window.hcaptcha.render(ref.current!, {
-          sitekey: siteKey,
+          sitekey: resolvedSiteKey,
           callback(token: string) {
             onToken?.(token);
           },
@@ -57,7 +58,7 @@ export function Captcha({ provider, siteKey, onToken }: Props) {
 
       await loadScript("https://www.google.com/recaptcha/api.js?render=explicit");
       const widgetId = window.grecaptcha.render(ref.current!, {
-        sitekey: siteKey,
+        sitekey: resolvedSiteKey,
         callback(token: string) {
           onToken?.(token);
         },

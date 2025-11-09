@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server";
 
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { CollectPayloadSchema } from "@/lib/validation";
+import type { Json } from "@/types/supabase";
+
 import {
   getDevice,
   getSiteByKey,
@@ -116,7 +118,7 @@ export async function POST(request: NextRequest) {
         ua,
         ip_truncated: ipTruncated,
         ts: event.ts ? new Date(event.ts).toISOString() : undefined,
-        payload: event.payload ?? null,
+        payload: (event.payload as Json | undefined) ?? null,
         purpose: event.purpose ?? null,
       })),
     );

@@ -21,7 +21,10 @@ declare global {
       getResponse: (id: string | null) => string;
     };
     grecaptcha: {
-      render: (el: HTMLElement, options: { sitekey: string }) => string;
+      render: (
+        el: HTMLElement,
+        options: { sitekey: string; callback?: (token: string) => void },
+      ) => string;
       reset: (id: string) => void;
       getResponse: (id: string) => string;
     };

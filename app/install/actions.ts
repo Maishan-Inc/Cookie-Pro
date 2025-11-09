@@ -43,7 +43,8 @@ export async function createSite(formData: FormData) {
   const siteKey = `site_${randomUUID().replace(/-/g, "")}`;
   const siteSalt = generateSiteSalt();
 
-  await getServiceRoleClient().from("sites").insert({
+  const client = getServiceRoleClient();
+  const payload = {
     name,
     site_key: siteKey,
     site_salt: siteSalt,
@@ -52,8 +53,9 @@ export async function createSite(formData: FormData) {
     captcha_provider: providerValue,
     captcha_site_key: captchaSiteKey,
     captcha_secret: captchaSecret,
-  });
+  } satisfies Database["public"]["Tables"]["sites"]["Insert"];
+
+  await (client.from("sites") as any).insert([payload]);
 
   revalidatePath("/install");
-  return { siteKey, policyVersion: policy };
 }

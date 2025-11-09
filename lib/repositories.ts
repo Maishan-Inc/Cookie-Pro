@@ -36,12 +36,10 @@ export async function upsertDevice(
   deviceId: string,
 ): Promise<void> {
   const now = new Date().toISOString();
-  const { error } = await client()
-    .from("devices")
-    .upsert(
-      { site_id: siteId, device_id: deviceId, last_seen_at: now },
-      { onConflict: "site_id,device_id" },
-    );
+  const { error } = await (client().from("devices") as any).upsert(
+    { site_id: siteId, device_id: deviceId, last_seen_at: now },
+    { onConflict: "site_id,device_id" },
+  );
   if (error) throw error;
 }
 
@@ -60,7 +58,7 @@ export async function insertConsent({
   userAgent: string | null;
   ipTruncated: string | null;
 }): Promise<void> {
-  const { error } = await client().from("consents").upsert(
+  const { error } = await (client().from("consents") as any).upsert(
     {
       site_id: siteId,
       device_id: deviceId,
@@ -94,14 +92,16 @@ export async function insertEvents(
   entries: Array<Database["public"]["Tables"]["events"]["Insert"]>,
 ): Promise<void> {
   if (!entries.length) return;
-  const { error } = await client().from("events").insert(entries);
+  const { error } = await (client().from("events") as any).insert(entries);
   if (error) throw error;
 }
 
-export async function getDashboard(siteKey: string) {
-  const { data, error } = await client().rpc("get_consent_dashboard", {
+export async function getDashboard(
+  siteKey: string,
+): Promise<Database["public"]["Functions"]["get_consent_dashboard"]["Returns"]> {
+  const { data, error } = await (client().rpc as any)("get_consent_dashboard", {
     p_site_key: siteKey,
   });
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
