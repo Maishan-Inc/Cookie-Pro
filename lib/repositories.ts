@@ -3,7 +3,9 @@ import type { Database } from "@/types/supabase";
 
 const client = () => getServiceRoleClient();
 
-export async function getSiteByKey(siteKey: string) {
+export async function getSiteByKey(
+  siteKey: string,
+): Promise<Database["public"]["Tables"]["sites"]["Row"]> {
   const { data, error } = await client()
     .from("sites")
     .select("*")
@@ -15,7 +17,10 @@ export async function getSiteByKey(siteKey: string) {
   return data;
 }
 
-export async function getDevice(siteId: number, deviceId: string) {
+export async function getDevice(
+  siteId: number,
+  deviceId: string,
+): Promise<Database["public"]["Tables"]["devices"]["Row"] | null> {
   const { data, error } = await client()
     .from("devices")
     .select("*")
@@ -26,7 +31,10 @@ export async function getDevice(siteId: number, deviceId: string) {
   return data ?? null;
 }
 
-export async function upsertDevice(siteId: number, deviceId: string) {
+export async function upsertDevice(
+  siteId: number,
+  deviceId: string,
+): Promise<void> {
   const now = new Date().toISOString();
   const { error } = await client()
     .from("devices")
@@ -51,7 +59,7 @@ export async function insertConsent({
   choices: Record<string, boolean>;
   userAgent: string | null;
   ipTruncated: string | null;
-}) {
+}): Promise<void> {
   const { error } = await client().from("consents").upsert(
     {
       site_id: siteId,
@@ -66,7 +74,10 @@ export async function insertConsent({
   if (error) throw error;
 }
 
-export async function latestConsent(siteId: number, deviceId: string) {
+export async function latestConsent(
+  siteId: number,
+  deviceId: string,
+): Promise<Database["public"]["Tables"]["consents"]["Row"] | null> {
   const { data, error } = await client()
     .from("consents")
     .select("*")
@@ -81,7 +92,7 @@ export async function latestConsent(siteId: number, deviceId: string) {
 
 export async function insertEvents(
   entries: Array<Database["public"]["Tables"]["events"]["Insert"]>,
-) {
+): Promise<void> {
   if (!entries.length) return;
   const { error } = await client().from("events").insert(entries);
   if (error) throw error;
