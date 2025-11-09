@@ -187,41 +187,42 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     hero: {
       eyebrow: "Maishan · Consent & Telemetry",
-      title: "Privacy-first consent manager with turnkey analytics",
+      title: "Privacy-first consent management and telemetry toolkit",
       subtitle:
-        "Cookie-Pro ships a Next.js + Supabase stack for installing, operating, and observing consent flows with minimal telemetry. Built for teams who care about governance and DX.",
-      primaryCta: "View Install Guide",
-      secondaryCta: "Explore Console",
+        "Cookie-Pro bundles a Next.js + Supabase blueprint so you can deploy, observe, and evolve consent flows with minimal data collection.",
+      primaryCta: "Open Install Guide",
+      secondaryCta: "Go to Console",
       cardTitle: "Why Cookie-Pro?",
       cardBody:
-        "Edge script + Supabase persistence + CAPTCHA gating out of the box, ready for your markets with bilingual UI and future-ready theming.",
+        "Edge script, Supabase persistence, CAPTCHA guardrails, and bilingual UI are ready on day one—perfect for modern privacy teams.",
     },
     install: {
       title: "Guided Installation",
       description:
-        "Complete the license agreement, environment checks, and administrator bootstrap to lock down your deployment.",
+        "Walk through the license agreement, environment diagnostics, and administrator bootstrap so your deployment stays locked down.",
       licenseTitle: "1 · License Agreement",
       licenseAgreement:
-        "By proceeding you acknowledge the Maishan, Inc Open Source Software Agreement (MIT License) and confirm that you are authorized to configure this deployment.",
+        "By continuing you acknowledge the Maishan, Inc OSS Agreement (MIT License) and confirm you are authorized to configure this project.",
       licenseCta: "I agree, continue",
       instructionsTitle: "Before you continue",
-      instructionsDescription: "Follow the checklist below to make sure your Supabase project and environment variables are ready. Each item links back to the docs in case you need a refresher.",
+      instructionsDescription:
+        "Complete the tasks below so the installer can talk to Supabase and Vercel without interruptions.",
       instructionsList: [
-        "Create (or reuse) a Supabase project, then copy SUPABASE_URL and SUPABASE_SERVICE_ROLE into your Vercel environment (Production + Preview).",
-        "Run sql/01_init.sql once inside Supabase → SQL Editor so all tables and functions exist before continuing.",
-        "Decide on a secure admin alias (e.g., /admin-yourteam) and store ADMIN_SESSION_SECRET/USER_SESSION_SECRET in the environment.",
+        "Create (or reuse) a Supabase project, then copy SUPABASE_URL and SUPABASE_SERVICE_ROLE into your Vercel Production and Preview environments.",
+        "Run sql/01_init.sql inside Supabase → SQL Editor once so every table, function, and policy exists ahead of time.",
+        "Pick a unique admin alias (e.g. /admin-yourteam) and set ADMIN_SESSION_SECRET + USER_SESSION_SECRET before clicking Next.",
       ],
       envTitle: "2 · Environment Check",
-      envHelp:
-        "We verify mandatory environment variables so Secrets never leave your pipeline.",
+      envHelp: "We only proceed when mandatory secrets exist in the current environment.",
       dbTitle: "3 · Database Diagnostics",
       dbVersion: "Postgres version",
       checksTitle: "Environment & database checks",
-      checksDescription: "All installation tests run inside your Supabase project—if something fails, use the guidance below to fix it and run the check again.",
-      connectionHelp: "Need help connecting? Confirm the Supabase project URL matches the Service Role and that your IP/location is allowed inside Supabase → Project Settings → API.",
+      checksDescription: "Installer tests run directly against your Supabase project. Fix any failing item and press Next again.",
+      connectionHelp:
+        "Need connectivity help? Ensure the Supabase URL matches the Service Role and that your IP/location is allowed under Supabase → Project Settings → API.",
       adminTitle: "4 · Administrator Account",
       adminDescription:
-        "Define a console alias and credentials. The alias will be required to open the admin login screen.",
+        "Set the only admin alias and credentials. Anyone opening /admin-login must supply this alias to continue.",
       adminPathLabel: "Admin backend alias (e.g. /admin-max1234)",
       adminNameLabel: "Administrator name",
       passwordLabel: "Password",
@@ -240,7 +241,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     dashboard: {
       heading: "User Console",
       subheading:
-        "Monitor consent KPIs, review telemetry, and manage scripts from your personalized workspace.",
+        "Monitor consent KPIs, review telemetry, and manage edge scripts from your personalized workspace.",
       siteLabel: "Site key",
       load: "Load",
     },
@@ -251,31 +252,30 @@ export const dictionaries: Record<Locale, Dictionary> = {
     license: {
       heading: "Maishan, Inc OSS License Notice",
       body:
-        "Cookie-Pro is distributed under the MIT License. You may use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to the inclusion of this notice in all copies or substantial portions of the Software.",
+        "Cookie-Pro ships under the MIT License. You may use, copy, modify, merge, publish, distribute, sublicense, or sell copies provided this notice appears in all substantial portions.",
     },
     auth: {
       loginTitle: "Administrator Login",
       loginSubtitle:
-        "Enter the credentials configured during installation. Access requires the unique admin alias.",
+        "Provide the alias configured during installation along with the password to unlock the console.",
       entryRequired: "Please supply the admin backend alias to access this page.",
       email: "Email",
       password: "Password",
-      submit: "Sign In",
-      unauthorized: "Session invalid. Please re-enter your admin alias and password.",
+      submit: "Sign in",
+      unauthorized: "Session invalid. Please re-enter your alias and password.",
       registerPrompt: "Need an account?",
     },
     alerts: {
-      installLocked:
-        "Installation locked. Update the admin path or credentials from the system settings once logged in.",
+      installLocked: "Installation is locked. Update admin settings once you are signed in.",
       loginSuccess: "Login successful. Redirecting to the admin dashboard…",
       registrationStarted: "Verification code sent to your inbox.",
-      verificationFailed: "Invalid verification code.",
-      smtpMissing: "SMTP settings are required before sending emails.",
+      verificationFailed: "Invalid or expired verification code.",
+      smtpMissing: "SMTP settings must be configured before sending emails.",
       registrationDisabled: "Self-service registration has been disabled by an administrator.",
     },
     register: {
       title: "Create your account",
-      subtitle: "We'll email you a six-character verification code.",
+      subtitle: "We will email you a six-character verification code.",
       name: "Name",
       email: "Work email",
       password: "Password",
@@ -287,7 +287,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     smtp: {
       title: "SMTP settings",
-      description: "Configure the SMTP server used for verification emails.",
+      description: "Configure the SMTP server responsible for verification emails.",
       host: "Host",
       port: "Port",
       secure: "Use TLS (secure)",
@@ -300,7 +300,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     templates: {
       title: "Email templates",
-      description: "Customize the verification email copy per locale.",
+      description: "Customize the verification email content per locale.",
       locale: "Locale",
       subject: "Subject",
       body: "Body",
@@ -309,7 +309,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     system: {
       title: "System settings",
-      description: "Manage branding, localization, and enrollment defaults.",
+      description: "Manage branding, localization defaults, and signup policy.",
       productName: "Product name",
       supportEmail: "Support email (optional)",
       defaultLocale: "Default locale",
@@ -352,7 +352,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       created: "Created",
     },
     userConsole: {
-      greeting: "Hello there 👋",
+      greeting: "Welcome back 👋",
     },
     admin: {
       heading: "Admin Console",
@@ -376,50 +376,51 @@ export const dictionaries: Record<Locale, Dictionary> = {
     hero: {
       eyebrow: "Maishan · 同意与遥测",
       title: "隐私优先的同意管理与轻量遥测套件",
-      subtitle: "Cookie-Pro 提供 Next.js + Supabase 全栈脚手架，帮助你以最小遥测落地多语言同意管理。",
+      subtitle:
+        "Cookie-Pro 提供 Next.js + Supabase 全栈脚手架，帮助你以最小遥测快速落地双语同意管理与观测。",
       primaryCta: "查看安装向导",
       secondaryCta: "进入控制台",
       cardTitle: "为何选择 Cookie-Pro？",
-      cardBody: "内置 Edge 脚本、Supabase 存储、CAPTCHA 防护与双语 UI，兼顾安全与体验。",
+      cardBody:
+        "内置 Edge 脚本、Supabase 持久化、CAPTCHA 防护与双语 UI，一次集成即可满足现代隐私合规需求。",
     },
     install: {
-      title: "����ʽ��װ",
-      description: "�������Э��ȷ�ϡ�������⡢���ݿ���������Ա��ʼ����������������",
-      licenseTitle: "����һ �� Э��ȷ��",
+      title: "引导式安装",
+      description: "依次完成协议确认、环境检测、数据库诊断与管理员初始化，即可锁定部署。",
+      licenseTitle: "步骤一 · 协议确认",
       licenseAgreement:
-        "������������ʾ�����Ķ���ͬ�� Maishan, Inc ��Դ����Э�飨MIT License������ȷ���ѻ���Ȩִ�б��β���",
-      licenseCta: "�����Ķ���ͬ��",
-      instructionsTitle: "��ʼ֮ǰ",
-      instructionsDescription: "�밴�����²���׼���û������������ݿ⣬�Ա����ڰ�װ�����г������ӻ�Ȩ�����⣺",
+        "继续操作即表示你已阅读并同意 Maishan, Inc 开源软件协议（MIT License），并确认拥有本次部署权限。",
+      licenseCta: "我已阅读并同意",
+      instructionsTitle: "开始之前",
+      instructionsDescription: "请按照以下步骤准备好环境变量与数据库，避免安装过程中出现连接或权限问题：",
       instructionsList: [
-        "�� Supabase ����̨���� SUPABASE_URL��SUPABASE_SERVICE_ROLE�����ֱ�д�� Vercel �� Production �� Preview ����������",
-        "�� Supabase �� SQL Editor��ִ��һ�� sql/01_init.sql��ȷ�����б��뺯���Ѵ�����",
-        "׼��Ψһ�ĺ�̨·������ /admin-yourteam�������� ADMIN_SESSION_SECRET / USER_SESSION_SECRET ͬ��������������",
+        "在 Supabase 控制台复制 SUPABASE_URL、SUPABASE_SERVICE_ROLE，并分别写入 Vercel Production 与 Preview 环境变量。",
+        "打开 Supabase → SQL Editor，执行一次 sql/01_init.sql，确保所有数据表、函数与策略已创建。",
+        "规划唯一后台路径（如 /admin-yourteam），同时配置 ADMIN_SESSION_SECRET / USER_SESSION_SECRET。",
       ],
-      envTitle: "����� �� �������",
-      envHelp: "ϵͳ�����Ҫ����������ȷ����Կ���������ܿػ����С�",
-      dbTitle: "������ �� ���ݿ����",
-      dbVersion: "Postgres �汾",
-      checksTitle: "���������ݿ����ϼ��",
-      checksDescription: "ÿ�ΰ�װ����ʵʱ��� Supabase ���ӣ�����ʧ����������ʾ�޸���������һ������",
-      connectionHelp: "����ʧ�ܣ���ȷ�� Supabase URL �� Service Role һ�£����� Project Settings �� API ��������ǰ IP/�������ʡ�",
-      adminTitle: "������ �� ����Ա�˻�",
-      adminDescription:
-        "����Ψһ��̨���������Աƾ�ݣ��������ʹ���Ա��¼ҳʱ�����ṩ�ñ�����",
-      adminPathLabel: "����Ա��̨��ַ������/admin-max1234��",
-      adminNameLabel: "����Ա����",
-      passwordLabel: "����",
-      confirmPasswordLabel: "ȷ������",
-      submit: "��ɰ�װ",
-      successRedirect: "��װ��ɣ�ϵͳ������ת������Ա��¼ҳ�桭",
-      pgUnknown: "δ֪����ִ�� SQL �����Ի�ȡ�汾��",
-      next: "��һ��",
-      back: "��һ��",
-      passwordMismatch: "������������벻һ�¡�",
-      errorDetails: "��װʧ��",
-      checkOk: "������",
-      checkMissing: "δ����",
-      optionalLabel: "����ѡ��",
+      envTitle: "步骤二 · 环境检测",
+      envHelp: "系统会检测必要环境变量，确保密钥仅存在于受控环境。",
+      dbTitle: "步骤三 · 数据库诊断",
+      dbVersion: "Postgres 版本",
+      checksTitle: "环境与数据库联合检测",
+      checksDescription: "安装过程会实时连通 Supabase，如遇失败请根据提示修复后再点击“下一步”。",
+      connectionHelp: "连接失败？请确认 Supabase URL 与 Service Role 配对，并在 Project Settings → API 中允许当前 IP/地区访问。",
+      adminTitle: "步骤四 · 管理员账户",
+      adminDescription: "配置唯一后台别名与管理员凭据。今后访问 /admin-login 必须提供该别名。",
+      adminPathLabel: "管理员后台地址（例：/admin-max1234）",
+      adminNameLabel: "管理员名称",
+      passwordLabel: "密码",
+      confirmPasswordLabel: "确认密码",
+      submit: "完成安装",
+      successRedirect: "安装完成，系统正在跳转到管理员登录页面…",
+      pgUnknown: "未知（请执行 SQL 升级以获取版本）",
+      next: "下一步",
+      back: "上一步",
+      passwordMismatch: "两次输入的密码不一致。",
+      errorDetails: "安装失败",
+      checkOk: "已配置",
+      checkMissing: "未配置",
+      optionalLabel: "（可选）",
     },
     dashboard: {
       heading: "用户控制台",
@@ -437,7 +438,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     auth: {
       loginTitle: "管理员登录",
-      loginSubtitle: "请输入安装时设置的凭据。访问登录页需要提供唯一后台别名。",
+      loginSubtitle: "请输入安装时设置的别名与密码，才能开启管理员控制台。",
       entryRequired: "请先提供管理员后台地址再访问此页面。",
       email: "邮箱",
       password: "密码",
@@ -446,7 +447,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       registerPrompt: "还没有账号？",
     },
     alerts: {
-      installLocked: "安装已锁定。登录后台后可在系统设置中修改管理员路径或凭据。",
+      installLocked: "安装已锁定。登录后台后可在系统设置中更新管理员路径或凭据。",
       loginSuccess: "登录成功，正在进入管理员控制台…",
       registrationStarted: "验证码已发送到您的邮箱。",
       verificationFailed: "验证码错误或已失效。",
@@ -467,7 +468,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     smtp: {
       title: "SMTP 设置",
-      description: "配置用于发送验证码邮件的 SMTP 服务。",
+      description: "配置发送验证码邮件所需的 SMTP 服务。",
       host: "主机地址",
       port: "端口",
       secure: "启用 TLS（安全）",
@@ -489,7 +490,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     system: {
       title: "系统设置",
-      description: "管理品牌、默认语言与注册策略。",
+      description: "管理品牌文案、默认语言与注册策略。",
       productName: "产品名称",
       supportEmail: "支持邮箱（可选）",
       defaultLocale: "默认语言",
@@ -504,7 +505,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     usage: {
       title: "调用情况",
-      description: "快速了解同意写入与遥测吞吐。",
+      description: "快速掌握同意写入与遥测吞吐。",
       sites: "站点",
       devices: "设备",
       consents: "同意记录",
@@ -514,7 +515,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       lastEvent: "最近事件",
       lastConsent: "最近同意",
       perSite: "站点调用（近 24 小时）",
-      perSiteEmpty: "暂无线上调用记录。",
+      perSiteEmpty: "暂无调用记录。",
     },
     usersAdmin: {
       title: "用户管理",
@@ -541,11 +542,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     home: {
       consentTitle: "同意弹窗示例",
-      consentSubtitle: "实时预览多语言同意弹窗的交互效果。",
+      consentSubtitle: "实时预览双语同意弹窗的交互效果。",
     },
-  },};
+  },
+};
 
 export function getDictionary(locale: Locale) {
   return dictionaries[locale] ?? dictionaries.en;
 }
-
