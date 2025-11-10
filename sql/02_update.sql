@@ -150,4 +150,15 @@ create table if not exists public.verification_codes (
 create index if not exists verification_codes_email_idx on public.verification_codes(email);
 alter table public.verification_codes enable row level security;
 
+drop view if exists public.site_consent_summary;
+
+create view public.site_consent_summary as
+select site_id,
+       date_trunc('day', created_at) as d,
+       count(*) as total,
+       count(*) filter (where (choices->>'necessary')::boolean is true) as necessary_ok,
+       count(*) filter (where (choices->>'ads')::boolean is true) as ads_ok
+from public.consents
+group by 1,2;
+
 commit;

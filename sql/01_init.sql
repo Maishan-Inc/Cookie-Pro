@@ -122,7 +122,9 @@ create table if not exists public.verification_codes (
 );
 create index if not exists verification_codes_email_idx on public.verification_codes(email);
 
-create view if not exists public.site_consent_summary as
+drop view if exists public.site_consent_summary;
+
+create view public.site_consent_summary as
 select site_id,
        date_trunc('day', created_at) as d,
        count(*) as total,
