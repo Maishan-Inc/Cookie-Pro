@@ -16,31 +16,25 @@ export default async function RegisterPage() {
   const t = await getTranslations(locale);
 
   return (
-    <section className="relative isolate overflow-hidden px-6 py-20">
-      <div className="mx-auto grid max-w-5xl items-center gap-10 rounded-[44px] border border-white/60 bg-white/85 p-8 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/70 dark:ring-white/10 lg:grid-cols-[1fr,1fr]">
-        <div className="space-y-5 text-sm text-zinc-600 dark:text-zinc-300">
-          <p className="inline-flex items-center rounded-full border border-zinc-200/60 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+    <section className="px-6 py-16">
+      <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-2">
+        <div className="rounded-3xl border surface-card p-6 shadow-sm">
+          <p className="inline-flex items-center rounded-full border surface-muted px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-300">
             {t.nav.register}
           </p>
-          <h1 className="text-3xl font-semibold text-zinc-900 dark:text-white">
+          <h1 className="mt-4 text-3xl font-semibold text-zinc-900 dark:text-white">
             {t.register.title}
           </h1>
-          <p>{t.register.subtitle}</p>
-          <ul className="space-y-3 text-sm">
-            <li className="rounded-[24px] border border-zinc-200/70 bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
-              - {t.alerts.registrationStarted}
-            </li>
-            <li className="rounded-[24px] border border-zinc-200/70 bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
-              - {t.alerts.verificationFailed}
-            </li>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{t.register.subtitle}</p>
+          <ul className="mt-6 space-y-3 text-sm text-zinc-600 dark:text-zinc-300">
+            <li className="rounded-2xl border surface-muted p-4">- {t.alerts.registrationStarted}</li>
+            <li className="rounded-2xl border surface-muted p-4">- {t.alerts.verificationFailed}</li>
           </ul>
         </div>
-        <div className="rounded-[32px] border border-white/60 bg-white/95 p-8 shadow-xl ring-1 ring-black/5 dark:border-white/10 dark:bg-zinc-950/70 dark:ring-white/10">
+        <div className="rounded-3xl border surface-card p-6 shadow-sm">
           <RegisterForm locale={locale} translations={t} />
         </div>
       </div>
-      <span className="pointer-events-none absolute -right-12 top-0 h-72 w-72 rounded-full bg-rose-100/60 blur-3xl dark:bg-rose-500/20" />
-      <span className="pointer-events-none absolute left-12 bottom-0 h-64 w-64 rounded-full bg-emerald-200/50 blur-3xl dark:bg-emerald-500/20" />
     </section>
   );
 }

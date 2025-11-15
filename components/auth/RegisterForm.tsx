@@ -100,7 +100,7 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
           </label>
           <button
             type="submit"
-            className="btn-press w-full rounded-full bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-zinc-900/30 transition hover:-translate-y-0.5 hover:brightness-110 dark:from-white dark:via-white dark:to-zinc-200 dark:text-zinc-900"
+            className="btn-press w-full rounded-full bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             {translations.register.submit}
           </button>
@@ -139,7 +139,7 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
           <input type="hidden" name="code" value={code.join("")} />
           <button
             type="submit"
-            className="btn-press w-full rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:-translate-y-0.5 hover:brightness-110 dark:from-emerald-400 dark:via-emerald-300 dark:to-emerald-400 dark:text-zinc-900"
+            className="btn-press w-full rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 dark:bg-emerald-400 dark:text-zinc-900"
           >
             {translations.register.verify}
           </button>
