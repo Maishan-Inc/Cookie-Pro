@@ -11,6 +11,12 @@ type EnvStatus = {
   required: boolean;
 };
 
+type SchemaStatus = {
+  name: string;
+  ok: boolean;
+  message?: string | null;
+};
+
 type InstallWizardProps = {
   locale: Locale;
   translations: Dictionary;
@@ -20,6 +26,7 @@ type InstallWizardProps = {
     projectUrl: string | null;
     message?: string | null;
   };
+  schemaStatus: SchemaStatus[];
 };
 
 export function InstallWizard({
@@ -27,6 +34,7 @@ export function InstallWizard({
   translations: t,
   envStatus,
   dbInfo,
+  schemaStatus,
 }: InstallWizardProps) {
   const steps = useMemo(() => ["license", "checks", "admin"] as const, []);
   const [current, setCurrent] = useState<(typeof steps)[number]>("license");
@@ -96,7 +104,7 @@ export function InstallWizard({
     switch (current) {
       case "license":
         return (
-          <div className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="space-y-6 rounded-3xl border surface-card p-6 shadow-sm transition-colors">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.install.licenseTitle}
             </h2>
@@ -108,7 +116,7 @@ export function InstallWizard({
                 type="checkbox"
                 checked={agreed}
                 onChange={(event) => setAgreed(event.target.checked)}
-                className="size-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 dark:border-zinc-700"
+                className="size-4 rounded border border-[color:var(--border-color)] text-[color:var(--foreground)] focus:ring-[color:var(--ring-color)]"
               />
               {t.install.licenseCta}
             </label>
@@ -116,7 +124,7 @@ export function InstallWizard({
         );
       case "checks":
         return (
-          <div className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="space-y-6 rounded-3xl border surface-card p-6 shadow-sm transition-colors">
             <div className="space-y-2">
               <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
                 {t.install.checksTitle}
@@ -124,7 +132,7 @@ export function InstallWizard({
               <p className="text-sm text-zinc-600 dark:text-zinc-300">
                 {t.install.checksDescription}
               </p>
-              <div className="rounded-2xl border border-dashed border-zinc-300 p-4 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+              <div className="rounded-2xl border border-dashed border-[color:var(--border-color)] bg-[color:var(--surface-muted)] p-4 text-sm text-zinc-600 dark:text-zinc-300 transition-colors">
                 <p className="font-semibold text-zinc-900 dark:text-white">
                   {t.install.instructionsTitle}
                 </p>
@@ -136,8 +144,8 @@ export function InstallWizard({
                 </ul>
               </div>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-3 rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-3 rounded-2xl border surface-card p-4 transition-colors">
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
                   {t.install.envTitle}
                 </h3>
@@ -146,7 +154,7 @@ export function InstallWizard({
                   {envStatus.map((item) => (
                     <li
                       key={item.key}
-                      className="flex items-center justify-between rounded-xl border border-zinc-100 px-3 py-2 dark:border-zinc-700"
+                      className="flex items-center justify-between rounded-xl border surface-muted px-3 py-2 transition-colors"
                     >
                       <span>
                         {item.key}{" "}
@@ -169,7 +177,7 @@ export function InstallWizard({
                   ))}
                 </ul>
               </div>
-              <div className="space-y-3 rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
+              <div className="space-y-3 rounded-2xl border surface-card p-4 transition-colors">
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
                   {t.install.dbTitle}
                 </h3>
@@ -190,6 +198,36 @@ export function InstallWizard({
                   )}
                 </dl>
               </div>
+              <div className="space-y-3 rounded-2xl border surface-card p-4 transition-colors">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                  {t.install.schemaTitle}
+                </h3>
+                <p className="text-xs text-zinc-500">{t.install.schemaHelp}</p>
+                <ul className="space-y-2 text-sm">
+                  {schemaStatus.map((table) => (
+                    <li
+                      key={table.name}
+                      className="flex items-center justify-between rounded-xl border surface-muted px-3 py-2 transition-colors"
+                    >
+                      <div>
+                        <p className="font-medium text-zinc-900 dark:text-white">{table.name}</p>
+                        {!table.ok && table.message && (
+                          <p className="text-xs text-rose-500 dark:text-rose-300">{table.message}</p>
+                        )}
+                      </div>
+                      <span
+                        className={
+                          table.ok
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-rose-500 dark:text-rose-400"
+                        }
+                      >
+                        {table.ok ? t.install.checkOk : t.install.checkMissing}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         );
@@ -197,7 +235,7 @@ export function InstallWizard({
         return (
           <form
             onSubmit={handleSubmit}
-            className="space-y-4 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+            className="space-y-4 rounded-3xl border surface-card p-6 shadow-sm transition-colors"
           >
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.install.adminTitle}
@@ -217,7 +255,7 @@ export function InstallWizard({
                   }))
                 }
                 required
-                className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
             <label className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -232,7 +270,7 @@ export function InstallWizard({
                   }))
                 }
                 required
-                className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
             <label className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -247,7 +285,7 @@ export function InstallWizard({
                   }))
                 }
                 required
-                className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
             <label className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -262,7 +300,7 @@ export function InstallWizard({
                   }))
                 }
                 required
-                className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
             {error && (

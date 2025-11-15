@@ -15,6 +15,27 @@ import { needsInstallation } from "@/lib/install/status";
 import { setAdminSession } from "@/lib/security/admin-session";
 import { ensureSystemSettings } from "@/lib/system-settings";
 
+type TableName = keyof Database["public"]["Tables"];
+
+const requiredTables: TableName[] = [
+  "sites",
+  "devices",
+  "consents",
+  "events",
+  "admin_settings",
+  "system_settings",
+  "users",
+  "smtp_settings",
+  "email_templates",
+  "verification_codes",
+];
+
+export type SchemaStatus = {
+  name: TableName;
+  ok: boolean;
+  message?: string | null;
+};
+
 export async function testConnection() {
   try {
     const client = getServiceRoleClient();
@@ -30,6 +51,35 @@ export async function testConnection() {
     };
   } catch (error) {
     return { ok: false, message: (error as Error).message };
+  }
+}
+
+export async function getSchemaStatus(): Promise<SchemaStatus[]> {
+  try {
+    const client = getServiceRoleClient();
+    const checks = await Promise.all(
+      requiredTables.map(async (name) => {
+        const { error } = await client
+          .from(name)
+          .select("id", { head: true, count: "exact" });
+        if (error) {
+          const message =
+            error.code === "42P01"
+              ? "Table missing. Run sql/01_init.sql."
+              : error.message;
+          return { name, ok: false, message };
+        }
+        return { name, ok: true };
+      }),
+    );
+    return checks;
+  } catch (error) {
+    const fallback = (error as Error).message;
+    return requiredTables.map((name) => ({
+      name,
+      ok: false,
+      message: fallback,
+    }));
   }
 }
 

@@ -34,6 +34,8 @@ export type Dictionary = {
     checksTitle: string;
     checksDescription: string;
     connectionHelp: string;
+    schemaTitle: string;
+    schemaHelp: string;
     adminTitle: string;
     adminDescription: string;
     adminPathLabel: string;
@@ -220,6 +222,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       checksDescription: "Installer tests run directly against your Supabase project. Fix any failing item and press Next again.",
       connectionHelp:
         "Need connectivity help? Ensure the Supabase URL matches the Service Role and that your IP/location is allowed under Supabase → Project Settings → API.",
+      schemaTitle: "Schema verification",
+      schemaHelp: "Installer checks whether sql/01_init.sql tables exist before unlocking admin setup.",
       adminTitle: "4 · Administrator Account",
       adminDescription:
         "Set the only admin alias and credentials. Anyone opening /admin-login must supply this alias to continue.",
@@ -405,6 +409,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       checksTitle: "环境与数据库联合检测",
       checksDescription: "安装过程会实时连通 Supabase，如遇失败请根据提示修复后再点击“下一步”。",
       connectionHelp: "连接失败？请确认 Supabase URL 与 Service Role 配对，并在 Project Settings → API 中允许当前 IP/地区访问。",
+      schemaTitle: "数据库表校验",
+      schemaHelp: "系统会确认 sql/01_init.sql 中定义的核心数据表是否已创建。",
       adminTitle: "步骤四 · 管理员账户",
       adminDescription: "配置唯一后台别名与管理员凭据。今后访问 /admin-login 必须提供该别名。",
       adminPathLabel: "管理员后台地址（例：/admin-max1234）",

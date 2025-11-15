@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { InstallWizard } from "@/app/install/InstallWizard";
-import { testConnection } from "@/app/install/actions";
+import { getSchemaStatus, testConnection } from "@/app/install/actions";
 import { getServerLocale, getTranslations } from "@/lib/i18n/server";
 import { needsInstallation } from "@/lib/install/status";
 
@@ -37,6 +37,7 @@ export default async function InstallPage() {
     projectUrl: process.env.SUPABASE_URL ?? null,
     message: dbResult.ok ? null : dbResult.message ?? null,
   };
+  const schemaStatus = await getSchemaStatus();
 
   return (
     <div className="space-y-8">
@@ -56,6 +57,7 @@ export default async function InstallPage() {
         translations={t}
         envStatus={envStatus}
         dbInfo={dbInfo}
+        schemaStatus={schemaStatus}
       />
     </div>
   );
