@@ -144,10 +144,10 @@ alter table public.smtp_settings enable row level security;
 alter table public.email_templates enable row level security;
 alter table public.verification_codes enable row level security;
 
-create policy sites_insert_service_role on public.sites for insert using (false) with check (false);
-create policy devices_insert_service_role on public.devices for insert using (false) with check (false);
-create policy consents_insert_service_role on public.consents for insert using (false) with check (false);
-create policy events_insert_service_role on public.events for insert using (false) with check (false);
+create policy sites_insert_service_role on public.sites for insert with check (false);
+create policy devices_insert_service_role on public.devices for insert with check (false);
+create policy consents_insert_service_role on public.consents for insert with check (false);
+create policy events_insert_service_role on public.events for insert with check (false);
 
 create or replace function public.get_consent_dashboard(p_site_key text)
 returns table(

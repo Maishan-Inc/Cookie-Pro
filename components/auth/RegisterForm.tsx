@@ -77,7 +77,7 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
             <input
               name="name"
               required
-              className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+              className="mt-2 w-full rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-3 text-base text-zinc-900 shadow-inner focus:border-zinc-900 focus:outline-none focus:ring-4 focus:ring-zinc-900/10 dark:border-white/10 dark:bg-zinc-900/60 dark:text-white dark:focus:border-white dark:focus:ring-white/10"
             />
           </label>
           <label className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -86,7 +86,7 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
               type="email"
               name="email"
               required
-              className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+              className="mt-2 w-full rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-3 text-base text-zinc-900 shadow-inner focus:border-zinc-900 focus:outline-none focus:ring-4 focus:ring-zinc-900/10 dark:border-white/10 dark:bg-zinc-900/60 dark:text-white dark:focus:border-white dark:focus:ring-white/10"
             />
           </label>
           <label className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -95,12 +95,12 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
               type="password"
               name="password"
               required
-              className="mt-1 w-full rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+              className="mt-2 w-full rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-3 text-base text-zinc-900 shadow-inner focus:border-zinc-900 focus:outline-none focus:ring-4 focus:ring-zinc-900/10 dark:border-white/10 dark:bg-zinc-900/60 dark:text-white dark:focus:border-white dark:focus:ring-white/10"
             />
           </label>
           <button
             type="submit"
-            className="btn-press w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="btn-press w-full rounded-full bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-zinc-900/30 transition hover:-translate-y-0.5 hover:brightness-110 dark:from-white dark:via-white dark:to-zinc-200 dark:text-zinc-900"
           >
             {translations.register.submit}
           </button>
@@ -126,7 +126,7 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
                 maxLength={1}
                 value={code[index] ?? ""}
                 onChange={(event) => handleCodeChange(index, event.target.value)}
-                className="h-12 w-12 rounded-2xl border border-zinc-300 text-center text-lg font-semibold tracking-widest text-zinc-900 focus:border-zinc-900 focus:outline-none dark:border-zinc-600 dark:bg-zinc-900 dark:text-white"
+                className="h-12 w-12 rounded-2xl border border-zinc-300/80 bg-white/80 text-center text-lg font-semibold tracking-widest text-zinc-900 shadow-inner focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:border-white/20 dark:bg-zinc-900/60 dark:text-white dark:focus:border-white dark:focus:ring-white/10"
                 onKeyDown={(event) => {
                   if (event.key === "Backspace" && !code[index] && index > 0) {
                     const prev = document.getElementById(`code-${index - 1}`);
@@ -139,7 +139,7 @@ export function RegisterForm({ locale, translations }: { locale: Locale; transla
           <input type="hidden" name="code" value={code.join("")} />
           <button
             type="submit"
-            className="btn-press w-full rounded-full bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="btn-press w-full rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:-translate-y-0.5 hover:brightness-110 dark:from-emerald-400 dark:via-emerald-300 dark:to-emerald-400 dark:text-zinc-900"
           >
             {translations.register.verify}
           </button>
