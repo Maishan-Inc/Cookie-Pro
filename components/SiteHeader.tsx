@@ -11,24 +11,21 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
   const t = await getTranslations(locale);
   const user = await getCurrentUser();
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/80 backdrop-blur-lg dark:border-zinc-800/80 dark:bg-zinc-900/80">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white"
-        >
+    <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-zinc-900 dark:text-white">
+        <Link href="/" className="text-lg font-semibold tracking-tight">
           Cookie-Pro
         </Link>
-        <nav className="flex items-center gap-4 text-sm font-medium text-zinc-600 dark:text-zinc-200">
-          <Link href="/" className="hover:text-zinc-900 dark:hover:text-white">
+        <nav className="flex flex-wrap items-center gap-4 text-sm font-medium">
+          <Link href="/" className="hover:text-zinc-600 dark:hover:text-zinc-300">
             {t.nav.home}
           </Link>
           {!user && (
             <>
-              <Link href="/login" className="hover:text-zinc-900 dark:hover:text-white">
+              <Link href="/login" className="hover:text-zinc-600 dark:hover:text-zinc-300">
                 {t.nav.login}
               </Link>
-              <Link href="/register" className="hover:text-zinc-900 dark:hover:text-white">
+              <Link href="/register" className="hover:text-zinc-600 dark:hover:text-zinc-300">
                 {t.nav.register}
               </Link>
             </>
@@ -44,7 +41,7 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
               <form action={logoutUser}>
                 <button
                   type="submit"
-                  className="text-sm text-zinc-600 underline-offset-4 hover:text-zinc-900 hover:underline dark:text-zinc-300 dark:hover:text-white"
+                  className="text-sm underline-offset-4 hover:text-zinc-600 hover:underline dark:hover:text-zinc-300"
                 >
                   {t.nav.logout}
                 </button>
