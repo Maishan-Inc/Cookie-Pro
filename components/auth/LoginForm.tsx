@@ -36,7 +36,7 @@ export function LoginForm({ translations }: { translations: Dictionary }) {
 
   return (
     <form action={formAction} className="space-y-4">
-      <label className="text-sm text-zinc-600 dark:text-zinc-300">
+      <label className="text-sm text-zinc-900 dark:text-zinc-200">
         {translations.auth.email}
         <input
           type="email"
@@ -45,7 +45,7 @@ export function LoginForm({ translations }: { translations: Dictionary }) {
           className="mt-2 w-full rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-3 text-base text-zinc-900 shadow-inner focus:border-zinc-900 focus:outline-none focus:ring-4 focus:ring-zinc-900/10 dark:border-white/10 dark:bg-zinc-900/60 dark:text-white dark:focus:border-white dark:focus:ring-white/10"
         />
       </label>
-      <label className="text-sm text-zinc-600 dark:text-zinc-300">
+      <label className="text-sm text-zinc-900 dark:text-zinc-200">
         {translations.auth.password}
         <input
           type="password"

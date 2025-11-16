@@ -302,6 +302,10 @@ export interface Database {
           last_event: string | null;
         }>;
       };
+      table_exists: {
+        Args: { p_table: string };
+        Returns: boolean;
+      };
     };
   };
 }
