@@ -59,17 +59,18 @@ export async function getSchemaStatus(): Promise<SchemaStatus[]> {
     const client = getServiceRoleClient();
     const checks = await Promise.all(
       requiredTables.map(async (name) => {
-        const { error } = await client
-          .from(name)
-          .select("id", { head: true, count: "exact" });
+        const tableName = `public.${name}`;
+        const { data, error } = await client.rpc("table_exists", {
+          p_table: tableName,
+        });
         if (error) {
-          const message =
-            error.code === "42P01"
-              ? "Table missing. Run sql/01_init.sql."
-              : error.message;
-          return { name, ok: false, message };
+          return {
+            name,
+            ok: false,
+            message: error.message,
+          };
         }
-        return { name, ok: true };
+        return { name, ok: Boolean(data) };
       }),
     );
     return checks;

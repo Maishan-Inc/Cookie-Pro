@@ -25,31 +25,31 @@ export default async function HomePage() {
           <h1 className="mt-6 text-4xl font-semibold leading-tight text-zinc-900 dark:text-white">
             {t.hero.title}
           </h1>
-          <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-300">
+          <p className="mt-4 text-sm text-zinc-900 dark:text-zinc-200">
             {t.hero.subtitle}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3 text-sm font-medium">
+          <div className="mt-8 flex flex-wrap gap-3 text-sm font-medium text-zinc-900 dark:text-white">
             <Link
               href="/login"
-              className="btn-press inline-flex items-center justify-center rounded-full bg-zinc-900 px-4 py-2.5 text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="btn-press inline-flex items-center justify-center rounded-full bg-zinc-900 px-4 py-2.5 text-white transition hover:bg-zinc-800 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600"
             >
               {t.nav.login}
             </Link>
             <Link
               href="/register"
-              className="btn-press inline-flex items-center justify-center rounded-full border surface-muted px-4 py-2.5 text-zinc-900 transition hover:border-zinc-900 dark:text-white"
+              className="btn-press inline-flex items-center justify-center rounded-full border surface-muted px-4 py-2.5 text-zinc-900 transition hover:border-zinc-900 dark:border-zinc-700 dark:text-white dark:hover:border-white"
             >
               {t.nav.register}
             </Link>
             <Link
               href="/user"
-              className="btn-press inline-flex items-center justify-center rounded-full border border-emerald-500/40 px-4 py-2.5 text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-400/60 dark:text-emerald-300 dark:hover:bg-transparent"
+              className="btn-press inline-flex items-center justify-center rounded-full border border-emerald-500/60 px-4 py-2.5 text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-400/60 dark:text-emerald-200 dark:hover:bg-transparent"
             >
               {t.nav.console}
             </Link>
           </div>
-          <dl className="mt-8 grid gap-4 text-sm text-zinc-600 dark:text-zinc-300 sm:grid-cols-2">
-            <div className="rounded-2xl border surface-muted p-4">
+          <dl className="mt-8 grid gap-4 text-sm text-zinc-900 dark:text-zinc-200 sm:grid-cols-2">
+            <div className="rounded-2xl border surface-muted p-4 text-zinc-900 dark:text-zinc-200">
               <dt className="text-xs uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
                 {t.admin.aliasLabel}
               </dt>
@@ -58,7 +58,7 @@ export default async function HomePage() {
               </dd>
               <p className="mt-1 text-xs">{t.auth.entryRequired}</p>
             </div>
-            <div className="rounded-2xl border surface-muted p-4">
+            <div className="rounded-2xl border surface-muted p-4 text-zinc-900 dark:text-zinc-200">
               <dt className="text-xs uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
                 {t.hero.cardTitle}
               </dt>
@@ -79,13 +79,13 @@ export default async function HomePage() {
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
           {t.home.consentTitle}
         </h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-300">{t.home.consentSubtitle}</p>
+        <p className="text-sm text-zinc-900 dark:text-zinc-200">{t.home.consentSubtitle}</p>
         <div className="mt-4 rounded-2xl border surface-muted p-4">
           <ConsentModal locale={locale === "zh" ? "zh-CN" : "en-US"} />
         </div>
       </section>
 
-      <section className="rounded-3xl border surface-card p-6 text-sm text-zinc-600 shadow-sm transition dark:text-zinc-300">
+      <section className="rounded-3xl border surface-card p-6 text-sm text-zinc-900 shadow-sm transition dark:text-zinc-200">
         <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
           {t.license.heading}
         </h3>

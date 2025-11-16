@@ -108,10 +108,10 @@ export function InstallWizard({
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.install.licenseTitle}
             </h2>
-            <p className="text-sm text-zinc-600 dark:text-zinc-300">
+            <p className="text-sm text-zinc-900 dark:text-zinc-200">
               {t.install.licenseAgreement}
             </p>
-            <label className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-200">
+            <label className="flex items-center gap-3 text-sm text-zinc-900 dark:text-zinc-200">
               <input
                 type="checkbox"
                 checked={agreed}
@@ -129,10 +129,10 @@ export function InstallWizard({
               <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
                 {t.install.checksTitle}
               </h2>
-              <p className="text-sm text-zinc-600 dark:text-zinc-300">
+              <p className="text-sm text-zinc-900 dark:text-zinc-200">
                 {t.install.checksDescription}
               </p>
-              <div className="rounded-2xl border border-dashed border-[color:var(--border-color)] bg-[color:var(--surface-muted)] p-4 text-sm text-zinc-600 dark:text-zinc-300 transition-colors">
+              <div className="rounded-2xl border border-dashed border-[color:var(--border-color)] bg-[color:var(--surface-muted)] p-4 text-sm text-zinc-900 dark:text-zinc-200 transition-colors">
                 <p className="font-semibold text-zinc-900 dark:text-white">
                   {t.install.instructionsTitle}
                 </p>
@@ -149,17 +149,17 @@ export function InstallWizard({
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
                   {t.install.envTitle}
                 </h3>
-                <p className="text-xs text-zinc-500">{t.install.envHelp}</p>
+                <p className="text-xs text-zinc-900 dark:text-zinc-300">{t.install.envHelp}</p>
                 <ul className="space-y-2 text-sm">
                   {envStatus.map((item) => (
                     <li
                       key={item.key}
-                      className="flex items-center justify-between rounded-xl border surface-muted px-3 py-2 transition-colors"
+                      className="flex flex-col gap-1 rounded-xl border surface-muted px-3 py-2 transition-colors text-zinc-900 dark:text-zinc-200"
                     >
-                      <span>
+                      <span className="font-medium">
                         {item.key}{" "}
                         {!item.required && (
-                          <em className="text-xs text-zinc-400">
+                          <em className="text-xs text-zinc-500 dark:text-zinc-400">
                             {t.install.optionalLabel}
                           </em>
                         )}
@@ -181,28 +181,32 @@ export function InstallWizard({
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
                   {t.install.dbTitle}
                 </h3>
-                <p className="text-xs text-zinc-500">{t.install.connectionHelp}</p>
-                <dl className="text-sm text-zinc-600 dark:text-zinc-300">
-                  <div className="flex justify-between border-b border-zinc-100 py-2 dark:border-zinc-800">
-                    <dt>{t.install.dbVersion}</dt>
-                    <dd>{dbInfo.version ?? t.install.pgUnknown}</dd>
+                <p className="text-xs text-zinc-900 dark:text-zinc-300">{t.install.connectionHelp}</p>
+                <div className="space-y-3 text-sm">
+                  <div className="rounded-2xl border surface-muted p-3 text-zinc-900 dark:text-white">
+                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                      {t.install.dbVersion}
+                    </p>
+                    <p className="break-words">{dbInfo.version ?? t.install.pgUnknown}</p>
                   </div>
-                  <div className="flex justify-between border-b border-zinc-100 py-2 dark:border-zinc-800">
-                    <dt>Supabase URL</dt>
-                    <dd>{dbInfo.projectUrl ?? "N/A"}</dd>
+                  <div className="rounded-2xl border surface-muted p-3 text-zinc-900 dark:text-white">
+                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                      Supabase URL
+                    </p>
+                    <p className="break-words">{dbInfo.projectUrl ?? "N/A"}</p>
                   </div>
                   {dbInfo.message && (
-                    <div className="py-2 text-rose-500 dark:text-rose-400">
+                    <div className="rounded-2xl border surface-muted p-3 text-rose-600 dark:text-rose-400">
                       {dbInfo.message}
                     </div>
                   )}
-                </dl>
+                </div>
               </div>
               <div className="space-y-3 rounded-2xl border surface-card p-4 transition-colors">
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
                   {t.install.schemaTitle}
                 </h3>
-                <p className="text-xs text-zinc-500">{t.install.schemaHelp}</p>
+                <p className="text-xs text-zinc-900 dark:text-zinc-300">{t.install.schemaHelp}</p>
                 <ul className="space-y-2 text-sm">
                   {schemaStatus.map((table) => (
                     <li
@@ -240,10 +244,10 @@ export function InstallWizard({
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
               {t.install.adminTitle}
             </h2>
-            <p className="text-sm text-zinc-600 dark:text-zinc-300">
+            <p className="text-sm text-zinc-900 dark:text-zinc-200">
               {t.install.adminDescription}
             </p>
-            <label className="text-sm text-zinc-600 dark:text-zinc-300">
+            <label className="text-sm text-zinc-900 dark:text-zinc-200">
               {t.install.adminPathLabel}
               <input
                 type="text"
@@ -258,7 +262,7 @@ export function InstallWizard({
                 className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
-            <label className="text-sm text-zinc-600 dark:text-zinc-300">
+            <label className="text-sm text-zinc-900 dark:text-zinc-200">
               {t.install.adminNameLabel}
               <input
                 type="text"
@@ -273,7 +277,7 @@ export function InstallWizard({
                 className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
-            <label className="text-sm text-zinc-600 dark:text-zinc-300">
+            <label className="text-sm text-zinc-900 dark:text-zinc-200">
               {t.install.passwordLabel}
               <input
                 type="password"
@@ -288,7 +292,7 @@ export function InstallWizard({
                 className="mt-2 w-full rounded-2xl border border-[color:var(--border-color)] bg-[color:var(--surface-muted)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-4 focus:ring-[color:var(--ring-color)]"
               />
             </label>
-            <label className="text-sm text-zinc-600 dark:text-zinc-300">
+            <label className="text-sm text-zinc-900 dark:text-zinc-200">
               {t.install.confirmPasswordLabel}
               <input
                 type="password"

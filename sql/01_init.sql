@@ -164,6 +164,14 @@ returns table(
   limit 60;
 $$ language sql stable;
 
+create or replace function public.table_exists(p_table text)
+returns boolean
+language sql
+stable
+as $$
+  select to_regclass(p_table) is not null;
+$$;
+
 create or replace function public.get_usage_overview()
 returns table(
   sites bigint,
