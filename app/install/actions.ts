@@ -151,7 +151,4 @@ export async function completeInstallation(input: {
   await ensureSystemSettings();
 
   await setAdminSession(passwordHash);
-
-  revalidatePath("/");
-  revalidatePath("/install");
 }

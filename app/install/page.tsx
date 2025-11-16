@@ -10,32 +10,6 @@ export default async function InstallPage() {
   const t = await getTranslations(locale);
   const pendingSetup = await needsInstallation();
 
-  const envStatus = [
-    {
-      key: "SUPABASE_URL",
-      present: Boolean(process.env.SUPABASE_URL),
-      required: true,
-    },
-    {
-      key: "SUPABASE_SERVICE_ROLE",
-      present: Boolean(process.env.SUPABASE_SERVICE_ROLE),
-      required: true,
-    },
-    {
-      key: "ADMIN_SESSION_SECRET",
-      present: Boolean(process.env.ADMIN_SESSION_SECRET),
-      required: false,
-    },
-  ];
-
-  const dbResult = await testConnection();
-  const dbInfo = {
-    version: dbResult.ok ? dbResult.version ?? null : null,
-    projectUrl: process.env.SUPABASE_URL ?? null,
-    message: dbResult.ok ? null : dbResult.message ?? null,
-  };
-  const schemaStatus = await getSchemaStatus();
-
   if (!pendingSetup) {
     const settings = await fetchAdminSettings();
     return (
@@ -62,6 +36,32 @@ export default async function InstallPage() {
       </div>
     );
   }
+
+  const envStatus = [
+    {
+      key: "SUPABASE_URL",
+      present: Boolean(process.env.SUPABASE_URL),
+      required: true,
+    },
+    {
+      key: "SUPABASE_SERVICE_ROLE",
+      present: Boolean(process.env.SUPABASE_SERVICE_ROLE),
+      required: true,
+    },
+    {
+      key: "ADMIN_SESSION_SECRET",
+      present: Boolean(process.env.ADMIN_SESSION_SECRET),
+      required: false,
+    },
+  ];
+
+  const dbResult = await testConnection();
+  const dbInfo = {
+    version: dbResult.ok ? dbResult.version ?? null : null,
+    projectUrl: process.env.SUPABASE_URL ?? null,
+    message: dbResult.ok ? null : dbResult.message ?? null,
+  };
+  const schemaStatus = await getSchemaStatus();
 
   return (
     <div className="space-y-8">
